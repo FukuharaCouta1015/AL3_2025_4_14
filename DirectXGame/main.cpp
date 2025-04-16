@@ -8,6 +8,8 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 	// KamataEngineの初期化
 	KamataEngine::Initialize(L" LE2D_19_フクハラ_コウタ");
 
+	
+
 	DirectXCommon* dxCommon = DirectXCommon::GetInstance();	
 
 	// ゲームシーンのインスタンスを生成
@@ -21,9 +23,13 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 			break;
 		}
 
+		gameScene->Update();
+
 		// 描画開始
 		dxCommon->PreDraw();
 		// ここに描画処理を記述
+
+		gameScene->Draw();
 
 		// 描画終了
 		dxCommon->PostDraw();
