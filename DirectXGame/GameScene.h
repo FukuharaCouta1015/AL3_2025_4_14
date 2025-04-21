@@ -1,5 +1,6 @@
 #pragma once
 #include <kamataEngine.h>
+#include "Player.h"
 class GameScene {
 public:
 
@@ -28,5 +29,7 @@ public:
 
 private:
 	uint32_t textureHandle_ = 0;
+	// プレイヤー
+	Player* player_ = nullptr;
 	
 };
