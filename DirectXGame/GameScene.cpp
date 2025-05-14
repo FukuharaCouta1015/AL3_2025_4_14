@@ -8,6 +8,11 @@ GameScene::~GameScene() {
 	delete player_;
 	delete model_; 
 	delete debugCamera_;
+	delete modelBlock_;
+	delete modelSkydome_;
+	delete skydome_;
+
+
 	for (std::vector<WorldTransform*>& WorldTransformBlockLine : WorldTransformBlocks_) {
 		for (WorldTransform* WorldTransformBlock : WorldTransformBlockLine) {
 			delete WorldTransformBlock;
@@ -19,8 +24,10 @@ GameScene::~GameScene() {
 
 void GameScene::Initialize() {
 	//画像の初期化
-	//textureHandle_ = TextureManager::Load("explosion.png");
-	modelBlock_ = Model::CreateFromOBJ("cube");
+	model_ = Model::CreateFromOBJ("player");
+	modelBlock_ = Model::CreateFromOBJ("block");
+
+	modelSkydome_ = Model::CreateFromOBJ("skydome",true);
 
 	debugCamera_ = new DebugCamera(1280,720);
 
@@ -56,10 +63,12 @@ void GameScene::Initialize() {
 	// カメラ
 	camera_.Initialize();
 
-	model_ = Model::Create();
+	
 
 	player_ = new Player();
 	player_->Initialize(model_, textureHandle_,&camera_);
+	skydome_= new Skydome();
+	skydome_->Initialize(modelSkydome_,&camera_);
 
 	
 }
@@ -102,20 +111,27 @@ void GameScene::Update() {
 void GameScene::Draw() {
 
 	DirectXCommon* dxCommon = DirectXCommon::GetInstance();
+
+	
+
 	// 描画開始
 	Model::PreDraw(dxCommon->GetCommandList());
+	skydome_->Draw();
+
 	for (std::vector<WorldTransform*>& WorldTransformBlockLine : WorldTransformBlocks_) {
 		for (WorldTransform* WorldTransformBlock : WorldTransformBlockLine) {
 			if (!WorldTransformBlock) {
 				continue;
 			}
 			modelBlock_->Draw(*WorldTransformBlock, camera_);
+			
 		}
+
 	}
 	
 	//model_->Draw(worldTransform_,camera_,textureHandle_);
 	player_->Draw();
 	Model::PostDraw();
-
+	
 
 }
