@@ -1,5 +1,7 @@
 #include "GameScene.h"
 #include "MyMath.h"
+#include <map>
+#include "MapChipField.h"
 
 using namespace KamataEngine;
 
@@ -11,7 +13,7 @@ GameScene::~GameScene() {
 	delete modelBlock_;
 	delete modelSkydome_;
 	delete skydome_;
-
+	delete mapChipField_;
 
 	for (std::vector<WorldTransform*>& WorldTransformBlockLine : WorldTransformBlocks_) {
 		for (WorldTransform* WorldTransformBlock : WorldTransformBlockLine) {
@@ -31,31 +33,24 @@ void GameScene::Initialize() {
 
 	debugCamera_ = new DebugCamera(1280,720);
 
-	const uint32_t kNumBlocksHorizontal = 20;
-	const uint32_t kNumBlocksVertical = 10;
+	mapChipField_ = new MapChipField();
+	mapChipField_->LodeMapChipCsv("Resources/blocks.csv");
+	
 
-	const float kBlockWidth = 2.0f;
-	const float kBlockHeight = 2.0f;
+	//const uint32_t kNumBlocksHorizontal = 20;
+	//const uint32_t kNumBlocksVertical = 10;
 
-	WorldTransformBlocks_.resize(kNumBlocksVertical);
-	for (uint32_t i = 0; i < kNumBlocksVertical; ++i) {
-		WorldTransformBlocks_[i].resize(kNumBlocksHorizontal);
-	}
+	//const float kBlockWidth = 2.0f;
+	//const float kBlockHeight = 2.0f;
 
-	//キューブの生成
-	for (uint32_t i = 0; i < kNumBlocksVertical; ++i) {
+	GenerateBlocks();
 
-		for (uint32_t j = 0;j < kNumBlocksHorizontal; ++j) {
-			if ((i+j) % 2 == 0) {
-				continue;
-			}
-				WorldTransformBlocks_[i][j] = new WorldTransform();
-				WorldTransformBlocks_[i][j]->Initialize();
-				WorldTransformBlocks_[i][j]->translation_.x = kBlockWidth * j;
-				WorldTransformBlocks_[i][j]->translation_.y = kBlockHeight * i;
-			
-		}
-	}
+	//WorldTransformBlocks_.resize(kNumBlocksVertical);
+	//for (uint32_t i = 0; i < kNumBlocksVertical; ++i) {
+	//	WorldTransformBlocks_[i].resize(kNumBlocksHorizontal);
+	//}
+
+	
 	// ワールド
 	worldTransform_.Initialize();
 
@@ -107,6 +102,29 @@ void GameScene::Update() {
 
 }
 
+void GameScene::GenerateBlocks() {
+
+	uint32_t numBlocksHorizontal = mapChipField_->GetNumBlockHorizontal();
+	uint32_t numBlocksVertical = mapChipField_->GetNumBlockVertical();
+
+	WorldTransformBlocks_.resize(numBlocksVertical);
+	for (uint32_t i = 0; i < numBlocksVertical; ++i) {
+		WorldTransformBlocks_[i].resize(numBlocksHorizontal);
+	}
+
+	// キューブの生成
+	for (uint32_t i = 0; i < numBlocksVertical; ++i) {
+
+		for (uint32_t j = 0; j < numBlocksHorizontal; ++j) {
+			if (mapChipField_->GetMapChipTypeByIndex(j, i) == MapChipType::kBlock) {
+				WorldTransform* worldTransform = new WorldTransform();
+				worldTransform->Initialize();
+				WorldTransformBlocks_[i][j] = worldTransform;
+				WorldTransformBlocks_[i][j]->translation_ = mapChipField_->GetMapChipPositionByIndex(j, i);
+			}
+		}
+	}
+}
 
 void GameScene::Draw() {
 
@@ -135,3 +153,5 @@ void GameScene::Draw() {
 	
 
 }
+
+

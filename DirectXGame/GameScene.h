@@ -3,7 +3,8 @@
 #include <vector>
 #include "Player.h"
 #include "Skydome.h"
-
+#include <map>
+#include "MapChipField.h"
 class GameScene {
 public:
 
@@ -20,9 +21,15 @@ public:
 	// 描画
 	void Draw();
 
+	void GenerateBlocks();
+
+
+
 	KamataEngine::Sprite* sprite_ = nullptr;
 
 	//uint32_t textureHandle_ = 0;	
+
+	MapChipField* mapChipField_ = nullptr;
 
 	// モデル	
 	KamataEngine::Model* model_ = nullptr;
