@@ -61,7 +61,10 @@ void GameScene::Initialize() {
 	
 
 	player_ = new Player();
-	player_->Initialize(model_, textureHandle_,&camera_);
+	Vector3 playerPosition = mapChipField_->GetMapChipPositionByIndex(1, 18);
+	player_->Initialize(model_, &camera_, playerPosition);
+
+
 	skydome_= new Skydome();
 	skydome_->Initialize(modelSkydome_,&camera_);
 
