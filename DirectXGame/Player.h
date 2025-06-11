@@ -10,6 +10,9 @@ public:
 	void Update();
 	// 描画
 	void Draw();
+	const KamataEngine::WorldTransform& GetWorldTransform() const { return worldTransform_; }
+	const KamataEngine::Vector3& GetVelocity() const { return velocity_; }
+	
 
 private:
 	enum class LRDirection { kLeft, kRight };
@@ -19,6 +22,8 @@ private:
 
 	// ワールドトランスフォーム
 	KamataEngine::WorldTransform worldTransform_;
+
+
 	// カメラ
 	KamataEngine::Camera* camera_;
 	uint32_t textureHandle_ = 0u;

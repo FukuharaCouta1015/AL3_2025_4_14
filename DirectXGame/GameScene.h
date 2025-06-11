@@ -5,6 +5,7 @@
 #include "Skydome.h"
 #include <map>
 #include "MapChipField.h"
+#include "CameraController.h"
 class GameScene {
 public:
 
@@ -45,11 +46,12 @@ public:
 	// デバックカメラ
 	KamataEngine::DebugCamera* debugCamera_ = nullptr;	
 
+	
 
 private:
 	uint32_t textureHandle_ = 0;
 	// プレイヤー
 	Player* player_ = nullptr;
 	Skydome* skydome_ = nullptr;
-	
+	CameraController* cameraController_ = nullptr;
 };

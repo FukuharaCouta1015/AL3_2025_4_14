@@ -14,6 +14,8 @@ GameScene::~GameScene() {
 	delete modelSkydome_;
 	delete skydome_;
 	delete mapChipField_;
+	delete cameraController_;
+
 
 	for (std::vector<WorldTransform*>& WorldTransformBlockLine : WorldTransformBlocks_) {
 		for (WorldTransform* WorldTransformBlock : WorldTransformBlockLine) {
@@ -33,9 +35,11 @@ void GameScene::Initialize() {
 
 	debugCamera_ = new DebugCamera(1280,720);
 
+
 	mapChipField_ = new MapChipField();
 	mapChipField_->LodeMapChipCsv("Resources/blocks.csv");
 	
+
 
 	//const uint32_t kNumBlocksHorizontal = 20;
 	//const uint32_t kNumBlocksVertical = 10;
@@ -68,12 +72,23 @@ void GameScene::Initialize() {
 	skydome_= new Skydome();
 	skydome_->Initialize(modelSkydome_,&camera_);
 
+	cameraController_ = new CameraController();
+	cameraController_->Initialize();
+	cameraController_->SetTarget(player_);
+	cameraController_->Reset();
+
 	
+	CameraController::Rect cameraArea = {12.0f, 100 - 12.0f, 6.0f, 6.0f};
+
+	cameraController_->SetMovebleArea(cameraArea);
+
+
 }
 
 void GameScene::Update() {
 
 	debugCamera_->Update();
+	cameraController_->Update();
 
 	#ifdef _DEBUG
 	if (Input::GetInstance()->TriggerKey(DIK_0)) {
@@ -89,6 +104,9 @@ void GameScene::Update() {
 		camera_.TransferMatrix();
 	} else {
 		camera_.UpdateMatrix();
+		camera_.matView = cameraController_->GetViewProjection().matView;
+		camera_.matProjection = cameraController_->GetViewProjection().matProjection;
+		camera_.TransferMatrix();
 	}
 
 	player_->Update();
