@@ -14,6 +14,19 @@ struct MapChipData {
 
 class MapChipField {
 public:
+
+	//範囲矩形
+	struct Rect {
+		float left;
+		float right; 
+		float bottom ;
+		float top ;
+	};
+
+	//ブロックの範囲取得関数
+	Rect GetRectByIndex(uint32_t xIndex, uint32_t yIndex);
+
+
 	static inline const float kBlockWidth = 1.0f;
 	static inline const float kBlockHeight = 1.0f;
 
@@ -32,6 +45,14 @@ public:
 	KamataEngine::Vector3 GetMapChipPositionByIndex(uint32_t xIndex, uint32_t yIndex);
 
 	MapChipData mapChipData_;
+
+	// インデックスセット
+	struct IndexSet{
+		uint32_t xIndex;
+		uint32_t yIndex;
+	};
+
+	IndexSet GetMapChipIndexSetByPosition(const KamataEngine::Vector3& position); 
 
 private:
 

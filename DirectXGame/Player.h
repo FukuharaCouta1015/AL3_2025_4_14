@@ -2,9 +2,12 @@
 #include "kamataEngine.h"
 #include <vector>
 
-class Player {
 
 	class MapChipField;
+
+
+class Player {
+
 
 public:
 	void Initialize(KamataEngine::Model* model_, KamataEngine::Camera* camera, const KamataEngine::Vector3& position);
@@ -48,4 +51,50 @@ private:
 	float turnFirstRotationY_ = 0.0f;
 	float turnTimer_ = 0.0f;
 	bool onGround_ = true;
+
+	static inline const float kWidth = 0.8f;
+	static inline const float kHeight = 0.8f;
+
+	struct CollisionMapInfo {
+		bool ceiling = false; 
+		bool landing = false;
+		bool hitWall = false;
+		KamataEngine::Vector3 move;
+	};
+
+
+	//移動入力
+	void  InputMove();
+
+	//マップ衝突判定
+	void CheckMapCollision(CollisionMapInfo& Info);
+	// マップ衝突判定(上)
+	void CheckMapCollisionUp(CollisionMapInfo& Info);
+
+	// 判定結果を反映して移動させる
+	void CheckMapMove(const CollisionMapInfo& Info);
+
+	// 天井に接している場合の処理
+	void CheckMapCeiling(const CollisionMapInfo& Info);
+
+	//旋回制御
+	void AnimateTurn();
+
+	//角
+	enum Corner {
+		kRightBottom, // みぎした
+		kLeftBottom,  // 左下
+		kRightTop,    // 右上
+		kLeftTop,     // 左上
+		
+		
+
+		kNumCorner   //要素数
+	};
+
+	//指定した角の座標計算
+	KamataEngine::Vector3 CornerPosition(const KamataEngine::Vector3& center, Corner corner);
+
+	//隙間
+	static inline const float kBlank = 0.1f;
 };
