@@ -71,11 +71,26 @@ private:
 	// マップ衝突判定(上)
 	void CheckMapCollisionUp(CollisionMapInfo& Info);
 
+	// マップ衝突判定(下)
+	void CheckMapCollisionDown(CollisionMapInfo& Info);
+
+	// マップ衝突判定(右)
+	void CheckMapCollisionRight(CollisionMapInfo& Info);
+
+	// マップ衝突判定(左)
+	void CheckMapCollisionLeft(CollisionMapInfo& Info);
+
 	// 判定結果を反映して移動させる
 	void CheckMapMove(const CollisionMapInfo& Info);
 
 	// 天井に接している場合の処理
 	void CheckMapCeiling(const CollisionMapInfo& Info);
+
+	// 壁に接触している場合の処理
+	void CheckMapWall(const CollisionMapInfo& Info);
+
+	// 接地状態の切り替え
+	void CheckMapLanding(const CollisionMapInfo& Info);
 
 	//旋回制御
 	void AnimateTurn();
@@ -97,4 +112,14 @@ private:
 
 	//隙間
 	static inline const float kBlank = 0.1f;
+
+	// 着地時の速度減衰率
+	static inline const float kAttenuationLanding = 0.5f; // 着地時の速度減衰率
+
+	// 微小な数値
+	static inline const float kGroundSearchHeight = 0.1f; 
+
+	//壁の速度減衰率
+	static inline const float kAttenuationWall = 0.5f; 
+
 };
