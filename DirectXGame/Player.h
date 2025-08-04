@@ -2,8 +2,7 @@
 #include "kamataEngine.h"
 #include <vector>
 
-
-	class MapChipField;
+class MapChipField;
 
 
 class Player {

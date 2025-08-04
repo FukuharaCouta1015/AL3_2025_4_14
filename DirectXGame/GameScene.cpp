@@ -3,6 +3,7 @@
 #include <map>
 #include "MapChipField.h"
 
+
 using namespace KamataEngine;
 
 //デストラクタ
@@ -15,6 +16,8 @@ GameScene::~GameScene() {
 	delete skydome_;
 	delete mapChipField_;
 	delete cameraController_;
+	delete enemy_;
+	delete modelEnemy_;
 
 
 	for (std::vector<WorldTransform*>& WorldTransformBlockLine : WorldTransformBlocks_) {
@@ -29,6 +32,7 @@ GameScene::~GameScene() {
 void GameScene::Initialize() {
 	//画像の初期化
 	model_ = Model::CreateFromOBJ("player");
+	modelEnemy_ = Model::CreateFromOBJ("enemy");
 	modelBlock_ = Model::CreateFromOBJ("block");
 
 	modelSkydome_ = Model::CreateFromOBJ("skydome",true);
@@ -63,10 +67,15 @@ void GameScene::Initialize() {
 	camera_.Initialize();
 
 	
-
+	// プレイヤー
 	player_ = new Player();
 	Vector3 playerPosition = mapChipField_->GetMapChipPositionByIndex(1, 18);
 	player_->Initialize(model_, &camera_, playerPosition);
+
+	//エネミー
+	enemy_ = new Enemy();
+	Vector3 enemyPosition = mapChipField_->GetMapChipPositionByIndex(5, 18);
+	enemy_->Initialize(modelEnemy_, &camera_, enemyPosition);
 
 
 	skydome_= new Skydome();
@@ -122,6 +131,9 @@ void GameScene::Update() {
 
 	}
 
+	enemy_->Update();
+
+
 }
 
 void GameScene::GenerateBlocks() {
@@ -171,7 +183,9 @@ void GameScene::Draw() {
 	
 	//model_->Draw(worldTransform_,camera_,textureHandle_);
 	player_->Draw();
+	enemy_->Draw();
 	Model::PostDraw();
+	
 	
 
 }
