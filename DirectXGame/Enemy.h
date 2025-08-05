@@ -1,7 +1,8 @@
 #pragma once
 #include "kamataEngine.h"
+#include "MyMath.h"
 
-
+class Player;
 class Enemy {
 public:
 	void Initialize(KamataEngine::Model* model, KamataEngine::Camera* camera, const KamataEngine::Vector3& position);
@@ -9,6 +10,12 @@ public:
 	void Update();
 	// 描画
 	void Draw();
+
+	AABB GetAABB();
+
+	KamataEngine::Vector3 GetWorldPosition();
+
+	void OnCollision(const Player* player);
 
 private:
 

@@ -1,6 +1,7 @@
 #include "GameScene.h"
 #include "MyMath.h"
 #include <map>
+#include "Player.h"
 #include "MapChipField.h"
 
 
@@ -16,7 +17,9 @@ GameScene::~GameScene() {
 	delete skydome_;
 	delete mapChipField_;
 	delete cameraController_;
-	delete enemy_;
+	for (Enemy* enemy : enemies_) {
+		delete enemy;
+	}
 	delete modelEnemy_;
 
 
@@ -73,10 +76,13 @@ void GameScene::Initialize() {
 	player_->Initialize(model_, &camera_, playerPosition);
 
 	//エネミー
-	enemy_ = new Enemy();
-	Vector3 enemyPosition = mapChipField_->GetMapChipPositionByIndex(5, 18);
-	enemy_->Initialize(modelEnemy_, &camera_, enemyPosition);
 
+	for (int32_t i = 0; i < 3; ++i) {
+		Enemy* newEnemy = new Enemy();
+		Vector3 enemyPosition = mapChipField_->GetMapChipPositionByIndex(8 + i, 18);
+		newEnemy->Initialize(modelEnemy_, &camera_, enemyPosition);
+		enemies_.push_back(newEnemy);
+	}
 
 	skydome_= new Skydome();
 	skydome_->Initialize(modelSkydome_,&camera_);
@@ -131,10 +137,32 @@ void GameScene::Update() {
 
 	}
 
-	enemy_->Update();
+
+	for (Enemy* enemy : enemies_) {
+		enemy->Update();
+	}
+	
+	CheckAllCollision();
 
 
 }
+
+void GameScene::CheckAllCollision() {
+#pragma region 自キャラと敵キャラのあたり判定
+	AABB aabb1, aabb2;
+	aabb1 = player_->GetAABB();
+	for (Enemy* enemy : enemies_) {
+		aabb2 = enemy->GetAABB();
+		if (IsCollision(aabb1, aabb2)) {
+			player_->OnCollision(enemy);
+			enemy->OnCollision(player_);
+		}
+
+		
+	}
+
+}
+
 
 void GameScene::GenerateBlocks() {
 
@@ -160,6 +188,7 @@ void GameScene::GenerateBlocks() {
 	}
 }
 
+
 void GameScene::Draw() {
 
 	DirectXCommon* dxCommon = DirectXCommon::GetInstance();
@@ -183,7 +212,9 @@ void GameScene::Draw() {
 	
 	//model_->Draw(worldTransform_,camera_,textureHandle_);
 	player_->Draw();
-	enemy_->Draw();
+	for (Enemy* enemy : enemies_) {
+		enemy->Draw() ;	
+	}
 	Model::PostDraw();
 	
 	

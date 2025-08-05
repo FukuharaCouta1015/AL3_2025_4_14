@@ -25,6 +25,8 @@ public:
 
 	void GenerateBlocks();
 
+	void CheckAllCollision();
+
 
 
 	KamataEngine::Sprite* sprite_ = nullptr;
@@ -56,7 +58,7 @@ private:
 	// プレイヤー
 	Player* player_ = nullptr;
 	Skydome* skydome_ = nullptr;
-	Enemy* enemy_ = nullptr;
+	std::list<Enemy*> enemies_;
 	CameraController* cameraController_ = nullptr;
 	
 };

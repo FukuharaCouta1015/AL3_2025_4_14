@@ -304,11 +304,10 @@ void Player::CheckMapCeiling(const CollisionMapInfo& Info) {
 }
 // 壁に接している場合の処理
 void Player::CheckMapWall(const CollisionMapInfo& Info) {
-	//壁接触による減速
+	// 壁接触による減速
 	if (Info.hitWall) {
-		velocity_.x *= (1.0f - kAttenuationWall); 
+		velocity_.x *= (1.0f - kAttenuationWall);
 	}
-
 }
 
 // 接地状態の切り替え
@@ -387,4 +386,26 @@ KamataEngine::Vector3 Player::CornerPosition(const KamataEngine::Vector3& center
 	};
 
 	return center + offsetTable[static_cast<uint32_t>(corner)];
+}
+
+Vector3 Player::GetWorldPosition() {
+	Vector3 worldPos;
+	worldPos.x = worldTransform_.matWorld_.m[3][0];
+	worldPos.y = worldTransform_.matWorld_.m[3][1];
+	worldPos.z = worldTransform_.matWorld_.m[3][2];
+	return worldPos;
+}
+
+AABB Player::GetAABB() { 
+	Vector3 worldPos = GetWorldPosition();
+	AABB aabb;
+	aabb.min = {worldPos.x - Player::kWidth / 2.0f, worldPos.y - Player::kHeight / 2.0f, worldPos.z - kWidth / 2.0f};
+	aabb.max = {worldPos.x + Player::kWidth / 2.0f, worldPos.y + Player::kHeight / 2.0f, worldPos.z + kWidth / 2.0f};
+
+	return aabb;
+}
+
+void Player::OnCollision(const Enemy* enemy) { 
+	(void)enemy;
+	velocity_ = Vector3(0, 1, 0);
 }
