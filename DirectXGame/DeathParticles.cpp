@@ -33,7 +33,7 @@ void DeathParticles::Update() {
 	for (uint32_t i = 0; i < 8; ++i) {
 		Vector3 velocity = {kSpeed, 0, 0};
 		float angle = kAngleUnit * i; // パーティクルの角度
-		Matrix4x4 matrixRotation = MakeRotateYMatrix(angle);// Y軸回転行列
+		Matrix4x4 matrixRotation = MakeRotateZMatrix(angle);// Y軸回転行列
 		velocity = Transform(velocity, matrixRotation);  // 速度を回転させる
 		worldTransforms_[i].translation_ += velocity;       // パーティクルの位置を更新
 	}
