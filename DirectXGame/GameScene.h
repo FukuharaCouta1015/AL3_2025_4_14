@@ -7,6 +7,7 @@
 #include "MapChipField.h"
 #include "CameraController.h"
 #include "Enemy.h"
+#include "DeathParticles.h"
 class GameScene {
 public:
 
@@ -60,5 +61,6 @@ private:
 	Skydome* skydome_ = nullptr;
 	std::list<Enemy*> enemies_;
 	CameraController* cameraController_ = nullptr;
-	
+	DeathParticles* deathParticles_ = nullptr;
+	KamataEngine::Model* modelDeathParticles_ = nullptr;
 };

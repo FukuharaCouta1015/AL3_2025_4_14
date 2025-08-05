@@ -3,6 +3,7 @@
 #include <map>
 #include "Player.h"
 #include "MapChipField.h"
+#include "DeathParticles.h"
 
 
 using namespace KamataEngine;
@@ -17,6 +18,8 @@ GameScene::~GameScene() {
 	delete skydome_;
 	delete mapChipField_;
 	delete cameraController_;
+	delete deathParticles_;
+
 	for (Enemy* enemy : enemies_) {
 		delete enemy;
 	}
@@ -37,6 +40,8 @@ void GameScene::Initialize() {
 	model_ = Model::CreateFromOBJ("player");
 	modelEnemy_ = Model::CreateFromOBJ("enemy");
 	modelBlock_ = Model::CreateFromOBJ("block");
+
+	modelDeathParticles_ = Model::CreateFromOBJ("deathParticle");
 
 	modelSkydome_ = Model::CreateFromOBJ("skydome",true);
 
@@ -99,6 +104,10 @@ void GameScene::Initialize() {
 	cameraController_->SetMovebleArea(cameraArea);
 
 	player_->SetMapChipField(mapChipField_);
+
+	deathParticles_ = new DeathParticles;
+	deathParticles_->Initialize(modelDeathParticles_, &camera_, playerPosition);
+
 }
 
 void GameScene::Update() {
@@ -144,6 +153,9 @@ void GameScene::Update() {
 	
 	CheckAllCollision();
 
+	if (deathParticles_) {
+		deathParticles_->Update();
+	}
 
 }
 
@@ -160,6 +172,7 @@ void GameScene::CheckAllCollision() {
 
 		
 	}
+
 
 }
 
@@ -215,10 +228,13 @@ void GameScene::Draw() {
 	for (Enemy* enemy : enemies_) {
 		enemy->Draw() ;	
 	}
-	Model::PostDraw();
 	
 	
+	if (deathParticles_) {
+		deathParticles_->Draw();
+	}
 
+	Model::PostDraw();
 }
 
 
