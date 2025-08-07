@@ -12,6 +12,10 @@ public:
 
 	void Draw();
 
+	bool IsFinished() const { return isFinished_; } // パーティクルが終了したかどうかを返す
+
+
+
 private:
 
 	static inline const uint32_t kNumParticles = 8; 

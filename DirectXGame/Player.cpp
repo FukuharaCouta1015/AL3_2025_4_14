@@ -49,7 +49,15 @@ void Player::Update() {
 	worldTransform_.TransferMatrix();
 }
 
-void Player::Draw() { model_->Draw(worldTransform_, *camera_); }
+void Player::Draw() {
+
+	if (isDead_ == true) {
+		return;
+	}
+
+	model_->Draw(worldTransform_, *camera_);
+
+}
 
 // 移動
 void Player::InputMove() {
@@ -405,7 +413,8 @@ AABB Player::GetAABB() {
 	return aabb;
 }
 
-void Player::OnCollision(const Enemy* enemy) { 
+void Player::OnCollision(const Enemy* enemy) {
 	(void)enemy;
-	velocity_ = Vector3(0, 1, 0);
+	isDead_ = true;
+	
 }

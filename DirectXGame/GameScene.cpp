@@ -4,6 +4,7 @@
 #include "Player.h"
 #include "MapChipField.h"
 #include "DeathParticles.h"
+#include "TitleScene.h"
 
 
 using namespace KamataEngine;
@@ -108,9 +109,30 @@ void GameScene::Initialize() {
 	deathParticles_ = new DeathParticles;
 	deathParticles_->Initialize(modelDeathParticles_, &camera_, playerPosition);
 
+
+	phase_ = Phase::kPlay;
+
 }
 
 void GameScene::Update() {
+
+	switch (phase_) {
+	case Phase::kPlay:
+		if (player_->isDead()) {
+			phase_ = Phase::kDeath;
+			const Vector3& deadParticlesPosition = player_->GetWorldPosition();  
+			deathParticles_->Initialize(modelDeathParticles_, &camera_, deadParticlesPosition); // デスパーティクルの初期化
+		}
+		break;
+	case Phase::kDeath:
+
+		if (deathParticles_) {
+			deathParticles_->Update();
+		}
+
+		break;
+	
+	}
 
 	debugCamera_->Update();
 	cameraController_->Update();
@@ -153,8 +175,8 @@ void GameScene::Update() {
 	
 	CheckAllCollision();
 
-	if (deathParticles_) {
-		deathParticles_->Update();
+	if (deathParticles_ && deathParticles_->IsFinished()) {
+		finished_ = true;
 	}
 
 }
@@ -171,6 +193,19 @@ void GameScene::CheckAllCollision() {
 		}
 
 		
+	}
+
+
+}
+
+void GameScene::ChangePhase() {
+	switch (phase_) {
+	case Phase::kPlay:
+
+		break;
+	case Phase::kDeath:
+		break;
+	
 	}
 
 
@@ -224,7 +259,10 @@ void GameScene::Draw() {
 	}
 	
 	//model_->Draw(worldTransform_,camera_,textureHandle_);
+
 	player_->Draw();
+
+
 	for (Enemy* enemy : enemies_) {
 		enemy->Draw() ;	
 	}

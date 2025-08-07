@@ -23,6 +23,10 @@ public:
 	AABB GetAABB();
 
 	void OnCollision(const Enemy* enemy);
+	// デスフラグのゲッター
+	bool isDead() const { return isDead_; }
+
+	KamataEngine::Vector3 GetWorldPosition();
 
 private:
 	enum class LRDirection { kLeft, kRight };
@@ -125,7 +129,11 @@ private:
 	//壁の速度減衰率
 	static inline const float kAttenuationWall = 0.5f; 
 
-	KamataEngine::Vector3 GetWorldPosition();
+	
+
+	//デスフラグ
+
+	bool isDead_ = false;
 
 	
 	

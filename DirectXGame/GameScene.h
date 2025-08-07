@@ -28,13 +28,17 @@ public:
 
 	void CheckAllCollision();
 
-
+	void ChangePhase();
 
 	KamataEngine::Sprite* sprite_ = nullptr;
 
 	//uint32_t textureHandle_ = 0;	
 
 	MapChipField* mapChipField_ = nullptr;
+
+	bool IsFinished() const { return finished_; }
+	
+
 
 	// モデル	
 	KamataEngine::Model* model_ = nullptr;
@@ -53,6 +57,12 @@ public:
 	KamataEngine::DebugCamera* debugCamera_ = nullptr;	
 
 	
+	enum class Phase {
+		kPlay,
+		kDeath,
+	};
+
+	Phase phase_;
 
 private:
 	uint32_t textureHandle_ = 0;
@@ -63,4 +73,5 @@ private:
 	CameraController* cameraController_ = nullptr;
 	DeathParticles* deathParticles_ = nullptr;
 	KamataEngine::Model* modelDeathParticles_ = nullptr;
+	bool finished_ = false; // ゲームシーンが終了したかどうか
 };
