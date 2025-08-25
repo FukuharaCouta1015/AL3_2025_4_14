@@ -62,48 +62,65 @@ void Player::Draw() {
 // 移動
 void Player::InputMove() {
 
-	if (onGround_) {
-		if (Input::GetInstance()->PushKey(DIK_RIGHT) || Input::GetInstance()->PushKey(DIK_LEFT)) {
-			Vector3 acceleration = {};
-			if (Input::GetInstance()->PushKey(DIK_RIGHT)) {
-				acceleration.x += kAcceleration; // 右方向の加速度
-				if (velocity_.x > 0.0f) {
-					velocity_.x *= (1.0f - kAttenuation);
-				}
-				if (lrDirection_ != LRDirection::kLeft) {
-					lrDirection_ = LRDirection::kLeft; // 右方向に変更
-					turnFirstRotationY_ = worldTransform_.rotation_.y;
-					turnTimer_ = kTimeTurn;
-				}
-				velocity_ += acceleration; // 速度に加速度を加える
-			} else if (Input::GetInstance()->PushKey(DIK_LEFT)) {
-				acceleration.x -= kAcceleration; // 左方向の加速度
-				if (velocity_.x > 0.0f) {
-					velocity_.x *= (1.0f - kAttenuation);
-				}
-				if (lrDirection_ != LRDirection::kRight) {
-					lrDirection_ = LRDirection::kRight; // 左方向に変更
-					turnFirstRotationY_ = worldTransform_.rotation_.y;
-					turnTimer_ = kTimeTurn;
-				}
-				velocity_ += acceleration; // 速度に加速度を加える
-				velocity_.x = std::clamp(velocity_.x, -1.0f, 1.0f);
-			}
+    // 二段ジャンプ用フラグとカウントを追加
+    static int jumpCount = 0;
+    static const int kMaxJumpCount = 2;
 
-		} else {
-			velocity_.x *= (1.0f - kAttenuation);
+    if (onGround_) {
+        jumpCount = 0; // 地面にいるときはジャンプ回数リセット
+        if (Input::GetInstance()->PushKey(DIK_RIGHT) || Input::GetInstance()->PushKey(DIK_LEFT)) {
+            Vector3 acceleration = {};
+            if (Input::GetInstance()->PushKey(DIK_RIGHT)) {
+                acceleration.x += kAcceleration; // 右方向の加速度
+                if (velocity_.x > 0.0f) {
+                    velocity_.x *= (1.0f - kAttenuation);
+                }
+                if (lrDirection_ != LRDirection::kLeft) {
+                    lrDirection_ = LRDirection::kLeft; // 右方向に変更
+                    turnFirstRotationY_ = worldTransform_.rotation_.y;
+                    turnTimer_ = kTimeTurn;
+                }
+                velocity_ += acceleration; // 速度に加速度を加える
+            } else if (Input::GetInstance()->PushKey(DIK_LEFT)) {
+                acceleration.x -= kAcceleration; // 左方向の加速度
+                if (velocity_.x > 0.0f) {
+                    velocity_.x *= (1.0f - kAttenuation);
+                }
+                if (lrDirection_ != LRDirection::kRight) {
+                    lrDirection_ = LRDirection::kRight; // 左方向に変更
+                    turnFirstRotationY_ = worldTransform_.rotation_.y;
+                    turnTimer_ = kTimeTurn;
+                }
+                velocity_ += acceleration; // 速度に加速度を加える
+                velocity_.x = std::clamp(velocity_.x, -1.0f, 1.0f);
+            }
 
-			velocity_.y = std::max(velocity_.y, -kLimitFallSpeed);
-		}
+        } else {
+            velocity_.x *= (1.0f - kAttenuation);
 
-		// ジャンプ
-		if (Input::GetInstance()->PushKey(DIK_UP)) {
+            velocity_.y = std::max(velocity_.y, -kLimitFallSpeed);
+        }
 
-			velocity_ += Vector3(0, kJmupAcceleration, 0);
-		}
-	} else {
-		velocity_ += Vector3(0, -kGravityAcceleration, 0);
-	}
+        // ジャンプ
+        if (Input::GetInstance()->PushKey(DIK_UP)) {
+            if (jumpCount < kMaxJumpCount) {
+                velocity_ += Vector3(0, kJmupAcceleration, 0);
+                ++jumpCount;
+                onGround_ = false; // 空中状態にする
+            }
+        }
+    } else {
+        velocity_ += Vector3(0, -kGravityAcceleration, 0);
+
+        // 空中でジャンプ
+        if (Input::GetInstance()->PushKey(DIK_UP)) {
+            if (jumpCount < kMaxJumpCount) {
+                velocity_.y = kJmupAcceleration; // 垂直速度を上書き
+                ++jumpCount;
+                onGround_ = false; // 空中状態にする
+            }
+        }
+    }
 }
 // マップ衝突チェック
 void Player::CheckMapCollision(CollisionMapInfo& Info) {

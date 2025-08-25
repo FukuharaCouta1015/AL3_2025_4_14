@@ -32,7 +32,9 @@ private:
 	KamataEngine::Vector3 velocity_ = {}; // 速度
 
 	static inline const float kWalkSpeed = 0.1f; // 移動速度
-
+    // Enemyクラスに敵の位置をx+20するメソッドを追加
+    public:
+       
 	static inline const float kWalkMotionAngleStart = 0.1f;
 
 	static inline const float kWalkMotionAngleEnd = 0.2f;

@@ -8,6 +8,7 @@ using namespace KamataEngine;
 TitleScene::~TitleScene() {
 	delete model_;
 	delete modelPlayer_;
+	delete fade_; 
 }
 
 void TitleScene::Initialize() { 
@@ -25,9 +26,35 @@ void TitleScene::Initialize() {
 	worldTransformPlayer_.translation_ = {0,-8,0};
 	worldTransformPlayer_.rotation_.y = std::numbers::pi_v<float>;
 
+	fade_ = new Fade();
+	fade_->Initialize(); // フェードの初期化
+	fade_->Start(Fade::State::FadeIn, 1.0f); // フェードインを開始
 }
 
 void TitleScene::Update() {
+
+	switch (phase_) {
+	case Phase::kMain:
+		if (Input::GetInstance()->PushKey(DIK_SPACE)) {
+			phase_ = Phase::kFadeOut;
+			fade_->Start(Fade::State::FadeOut, 1.0f);
+		}
+		break;
+	case Phase::kFadeIn:
+		fade_->Update();
+		if (fade_->IsFinished()) {
+			phase_ = Phase::kMain; // フェードインが完了したらメインフェーズに移行
+		}
+		break;
+	case Phase::kFadeOut:
+		fade_->Update();
+		if (fade_->IsFinished()) {
+			finished_ = true; // フェードアウトが完了したらタイトルシーンを終了
+		}
+
+	}
+	
+
 //アフィン変換行列の生成
 	worldTransform_.matWorld_ = MakeAffineMatrix(worldTransform_.scale_, worldTransform_.rotation_, worldTransform_.translation_);
 
@@ -40,11 +67,7 @@ void TitleScene::Update() {
 	worldTransformPlayer_.matWorld_ = MakeAffineMatrix(worldTransformPlayer_.scale_, worldTransformPlayer_.rotation_, worldTransformPlayer_.translation_);
 	worldTransformPlayer_.TransferMatrix();
 
-	if (Input::GetInstance()->PushKey(DIK_SPACE)) {
-		finished_ = true; 
-	}
-
-
+	
 }
 
 void TitleScene::Draw() {
@@ -59,5 +82,7 @@ void TitleScene::Draw() {
 	modelPlayer_->Draw(worldTransformPlayer_, camera_);
 
     Model::PostDraw();
+
+	fade_->Draw(); // フェードの描画
 
 }

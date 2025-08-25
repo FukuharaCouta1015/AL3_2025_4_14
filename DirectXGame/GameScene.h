@@ -8,6 +8,8 @@
 #include "CameraController.h"
 #include "Enemy.h"
 #include "DeathParticles.h"
+#include "Fade.h"
+
 class GameScene {
 public:
 
@@ -60,6 +62,8 @@ public:
 	enum class Phase {
 		kPlay,
 		kDeath,
+		kFadeIn,
+		kFadeOut,
 	};
 
 	Phase phase_;
@@ -74,4 +78,6 @@ private:
 	DeathParticles* deathParticles_ = nullptr;
 	KamataEngine::Model* modelDeathParticles_ = nullptr;
 	bool finished_ = false; // ゲームシーンが終了したかどうか
+	Fade* fade_ = nullptr;  // フェードオブジェクト
+
 };

@@ -12,7 +12,7 @@ void Enemy::Initialize(KamataEngine::Model* model, KamataEngine::Camera* camera,
 	assert(model);
 	model_ = model;
 	worldTransform_.Initialize();
-	worldTransform_.translation_ = position;
+	worldTransform_.translation_ = position ;
 	worldTransform_.rotation_.y = -std::numbers::pi_v<float> / 2.0f; // 左向きに設定
 	camera_ = camera;
 	velocity_ = {-kWalkSpeed, 0, 0}; // スケールを設定

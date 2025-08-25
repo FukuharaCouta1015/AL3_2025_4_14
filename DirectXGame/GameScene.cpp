@@ -5,7 +5,7 @@
 #include "MapChipField.h"
 #include "DeathParticles.h"
 #include "TitleScene.h"
-
+#include "Fade.h"
 
 using namespace KamataEngine;
 
@@ -20,6 +20,7 @@ GameScene::~GameScene() {
 	delete mapChipField_;
 	delete cameraController_;
 	delete deathParticles_;
+	delete fade_;
 
 	for (Enemy* enemy : enemies_) {
 		delete enemy;
@@ -85,7 +86,7 @@ void GameScene::Initialize() {
 
 	for (int32_t i = 0; i < 3; ++i) {
 		Enemy* newEnemy = new Enemy();
-		Vector3 enemyPosition = mapChipField_->GetMapChipPositionByIndex(8 + i, 18);
+		Vector3 enemyPosition = mapChipField_->GetMapChipPositionByIndex(30 + i, 18);
 		newEnemy->Initialize(modelEnemy_, &camera_, enemyPosition);
 		enemies_.push_back(newEnemy);
 	}
@@ -112,9 +113,16 @@ void GameScene::Initialize() {
 
 	phase_ = Phase::kPlay;
 
+
+	fade_ = new Fade();
+	fade_->Initialize(); // フェードの初期化
+	fade_->Start(Fade::State::FadeIn, 1.0f); // フェードインを開始
+
 }
 
 void GameScene::Update() {
+
+	fade_->Update();
 
 	switch (phase_) {
 	case Phase::kPlay:
@@ -129,9 +137,13 @@ void GameScene::Update() {
 		if (deathParticles_) {
 			deathParticles_->Update();
 		}
-
 		break;
-	
+	case Phase::kFadeIn:
+		fade_->Update();
+		break;
+	case Phase::kFadeOut:
+		fade_->Update();
+		break;
 	}
 
 	debugCamera_->Update();
@@ -175,9 +187,7 @@ void GameScene::Update() {
 	
 	CheckAllCollision();
 
-	if (deathParticles_ && deathParticles_->IsFinished()) {
-		finished_ = true;
-	}
+	ChangePhase();
 
 }
 
@@ -201,9 +211,28 @@ void GameScene::CheckAllCollision() {
 void GameScene::ChangePhase() {
 	switch (phase_) {
 	case Phase::kPlay:
-
+		if (player_->isDead() == true) {
+			phase_ = Phase::kDeath;
+			const Vector3& deadParticlesPosition = player_->GetWorldPosition();
+			deathParticles_ = new DeathParticles();
+			deathParticles_->Initialize(modelDeathParticles_, &camera_, deadParticlesPosition);
+		}
 		break;
 	case Phase::kDeath:
+		if (deathParticles_->IsFinished()) {
+			phase_ = Phase::kFadeOut;
+			fade_->Start(Fade::State::FadeOut, 1.0f); // フェードインを開始
+		}
+		break;
+	case Phase::kFadeIn:
+		if (fade_->IsFinished()) {
+			phase_ = Phase::kPlay;
+		}
+		break;
+	case Phase::kFadeOut:
+		if (fade_->IsFinished()) {
+			finished_ = true; // ゲームシーンを終了
+		}
 		break;
 	
 	}
@@ -260,7 +289,10 @@ void GameScene::Draw() {
 	
 	//model_->Draw(worldTransform_,camera_,textureHandle_);
 
-	player_->Draw();
+	if (phase_ == Phase::kPlay || phase_ == Phase::kFadeIn) {
+		player_->Draw();
+	}
+	
 
 
 	for (Enemy* enemy : enemies_) {
@@ -273,6 +305,8 @@ void GameScene::Draw() {
 	}
 
 	Model::PostDraw();
+
+	fade_->Draw();
 }
 
 
