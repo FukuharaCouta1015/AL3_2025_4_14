@@ -42,7 +42,7 @@ void MapChipField::LodeMapChipCsv(const std::string& filePaht) {
 	// ファイルを開く
 	std::ifstream file;
 	file.open(filePaht);
-	assert(file.is_open());
+	//assert(file.is_open());
 	// マップチップcsv
 	std::stringstream mapChipCsv;
 	// ファイルの内容を文字列ストリームにコピー

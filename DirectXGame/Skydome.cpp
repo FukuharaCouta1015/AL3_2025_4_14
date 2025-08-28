@@ -2,7 +2,7 @@
 using namespace KamataEngine;
 
 void Skydome::Initialize(KamataEngine::Model* model, Camera* camera) {
-	assert(model);
+	//assert(model);
 	model_ = model;
 	worldTransform_.Initialize();
 	camera_ = camera;
