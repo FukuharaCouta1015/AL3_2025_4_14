@@ -63,6 +63,7 @@ void TitleScene::Update() {
 	// 回転角度を更新
 	rotate += 0.1f; // 回転速度を調整
 	worldTransformPlayer_.rotation_.y = sin(rotate) + std::numbers::pi_v<float>; // Y軸を中心に回転
+	worldTransform_.rotation_.y = -sin(rotate) ; // Y軸を中心に回転
 
 	worldTransformPlayer_.matWorld_ = MakeAffineMatrix(worldTransformPlayer_.scale_, worldTransformPlayer_.rotation_, worldTransformPlayer_.translation_);
 	worldTransformPlayer_.TransferMatrix();
